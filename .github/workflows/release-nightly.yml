@@ -1,0 +1,59 @@
+name: release-nightly
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-nightly
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    name: Build musl binary and publish to nightly release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain (musl target)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+
+      - name: Install musl tools
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Cache cargo registry and target
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: musl
+
+      - name: Build release (musl)
+        run: cargo build --release --target x86_64-unknown-linux-musl
+
+      - name: Rename and stage artifact
+        run: |
+          mkdir -p dist
+          cp target/x86_64-unknown-linux-musl/release/monero-gotify dist/monero-gotify-x86_64-linux-musl
+          (cd dist && sha256sum monero-gotify-x86_64-linux-musl > monero-gotify-x86_64-linux-musl.sha256)
+
+      - name: Publish (or update) nightly release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          name: nightly
+          body: |
+            Build automatique du dernier commit `${{ github.sha }}` sur `main`.
+
+            Le tag `nightly` est mobile : il pointe toujours sur le dernier build.
+          prerelease: true
+          make_latest: false
+          files: |
+            dist/monero-gotify-x86_64-linux-musl
+            dist/monero-gotify-x86_64-linux-musl.sha256
