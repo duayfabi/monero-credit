@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Télécharge le dernier binaire publié sur la release `nightly` du repo
-# duayfabi/monero-gotify, vérifie son SHA256, puis l'exécute.
+# duayfabi/monero-credit, vérifie son SHA256, puis l'exécute.
 #
 # Conçu pour être lancé par SemaphoreUI (ou tout autre orchestrateur).
 # Le script n'embarque AUCUN secret : toutes les variables sensibles
@@ -8,7 +8,7 @@
 # fournies via l'environnement par l'appelant.
 #
 # Variables optionnelles :
-#   GH_REPO          défaut: duayfabi/monero-gotify
+#   GH_REPO          défaut: duayfabi/monero-credit
 #   GH_TAG           défaut: nightly
 #   GH_TOKEN         requis uniquement si le repo est privé
 #   INSTALL_DIR      défaut: ${XDG_CACHE_HOME:-$HOME/.cache}/monero-gotify
@@ -17,7 +17,7 @@
 
 set -euo pipefail
 
-GH_REPO="${GH_REPO:-duayfabi/monero-gotify}"
+GH_REPO="${GH_REPO:-duayfabi/monero-credit}"
 GH_TAG="${GH_TAG:-nightly}"
 INSTALL_DIR="${INSTALL_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/monero-gotify}"
 ASSET_NAME="${ASSET_NAME:-monero-gotify-x86_64-linux-musl}"
